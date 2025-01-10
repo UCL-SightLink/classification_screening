@@ -1,6 +1,6 @@
 import torch
 
-import Crosswalk_dataset as Dataset
+import CrosswalkDataset as Dataset
 import classifierModel as Model
 import Utilities as Utils
 
