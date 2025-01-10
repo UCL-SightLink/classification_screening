@@ -19,11 +19,11 @@ Another option is to use the dataset structure expected by the Object Detection 
 
 ### Example Output from the **InferAndDisplay** function
 
-![Example Classification](DisplayImages/Screenshot 2025-01-10 at 14.41.27.png)
+![Example Classification](DisplayImages/Screenshot%202025-01-10%20at%2014.41.27.png)
 
-![Example Classification](DisplayImages/Screenshot 2025-01-10 at 14.41.41.png)
+![Example Classification](DisplayImages/Screenshot%202025-01-10%20at%2014.41.41.png)
 
-![Example Classification](DisplayImages/Screenshot 2025-01-10 at 14.42.09.png)
+![Example Classification](DisplayImages/Screenshot%202025-01-10%20at%2014.42.09.png)
 
 
 ### Dependencies
