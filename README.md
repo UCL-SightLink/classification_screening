@@ -2,6 +2,8 @@
 
 This module implements a binary classification model for screening satellite image tiles based on whether they are likely to contain a zebra crossing. The inference functions are included (The pretrained model is available but exceeds the size that can be uploaded) but the functions for the processing and loading of the dataset are also included, to allow for fine tuning and further training of the models.
 
+The legacy versions of the classification are included for posterity and progress reporting, but are not included in the dependencies as they are not used.
+
 ## Overview
 ### Current Supported Model Architectures
 ```
