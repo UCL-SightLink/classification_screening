@@ -139,7 +139,7 @@ def breakdown(image_path, label, dst_dir, file_base, segment=segments, targ_size
 
                 # As the crosswalks are sparse - this improves the balance of positive to negative cases for training
                 else:
-                    if random.randint(0, 4) > 3:
+                    if random.randint(0, 4) >= 3:
                         with open(os.path.join(dst_dir, str(file_base)) + ".txt", 'w') as new_label_file:
                             new_label_file.write("0")
                             new_image.save(str(os.path.join(dst_dir, str(file_base))) + ".png")
@@ -148,3 +148,5 @@ def breakdown(image_path, label, dst_dir, file_base, segment=segments, targ_size
                 file_base += 1
 
     return file_base
+
+convert_database_to_segments("zebra_annotations/zebra_images", "zebra_annotations/txt_annotations", "zebra_annotations/classification_data")
