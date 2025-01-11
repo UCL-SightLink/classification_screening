@@ -2,7 +2,7 @@
 
 import torch
 from torchvision import transforms
-from torch.utils.data import Dataset, DataLoader, Subset
+from torch.utils.data import Dataset
 
 import os
 import numpy as np
@@ -26,12 +26,19 @@ class CrosswalkDataset(Dataset):
         image_path = os.path.join(self.src_dir, self.image_paths[index])
         label_path = os.path.join(self.src_dir, self.label_paths[index])
 
-        label = np.array([int(open(label_path).read().strip())])
+        label = [0, 0]
+        try:
+            if np.array([int(open(label_path).read().strip())]) == 1:
+                label = [1, 0]
+            else:
+                label = [0, 1]
+        except:
+            pass
         image =  Image.open(image_path)
         
         if self.transform is None:
             self.transform = transforms.ToTensor()
-        return (self.transform(image), torch.tensor(label, dtype=torch.float32))
+        return (self.transform(image), torch.FloatTensor(label))
 
 
 # Mean and Std. are chosen arbitrarily - need to be tuned
