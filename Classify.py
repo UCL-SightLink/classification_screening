@@ -17,8 +17,9 @@ warnings.filterwarnings(
     module=r'.*'
 )
 
-vgg16_state_path = "vgg16_binary_classifier_duo.pth"
-# A prototype version that's only been trained on 1000 images by transfer learning
+vgg16_state_path = "VGG16_Full_State_Dict.pth"
+# A prototype v2 version that's only been trained on 2000 images by transfer learning
+mobileNet_path = "MobileNetV3_state_dict_big_train.pth"
 data_path = "zebra_annotations/classification_data"
 
 classify = None
@@ -26,7 +27,7 @@ transform = None
 
 def load_vgg_classifier(state_dict_path):
     # Ignore depreciation warnings --> It works fine for our needs
-    model = models.vgg16(weights=models.VGG16_Weights.DEFAULT)
+    model = models.vgg16()
 
     # Modifies fully connected layer to output binary class predictions
     model.classifier[6] = torch.nn.Linear(model.classifier[6].in_features, 2)
@@ -34,8 +35,20 @@ def load_vgg_classifier(state_dict_path):
     model.load_state_dict(state_dict)
 
     model.eval()
+
     return model
 
+# Only loads the classifier weights, in the case where it is transfer learning on only the top.
+# This saves a significant amount of space
+def partial_vgg_load(classifier_state_dict_path):
+    model = models.vgg16(weights=models.VGG16_Weights.DEFAULT)
+
+    model.classifier[6] = torch.nn.Linear(model.classifier[6].in_features, 2)
+    model.classifier.load_state_dict(classifier_state_dict_path)
+
+    model.eval()
+
+    return model
 
 def load_resnet_classifier(state_dict_path):
     # Ignore depreciation warnings --> It works fine for our needs
@@ -48,8 +61,22 @@ def load_resnet_classifier(state_dict_path):
     resnet.eval()
     return resnet
 
-classify = load_vgg_classifier(vgg16_state_path)
+def load_mobileNet_classifier(state_dict_path):
+    # Ignore depreciation warnings --> It works fine for our needs
+    model = models.mobilenet_v3_small()
+    model.classifier[3] = torch.nn.Linear(model.classifier[3].in_features, 2)
+
+    state_dict = torch.load(state_dict_path)
+    model.load_state_dict(state_dict)
+
+    model.eval()
+    return model
+
+# classify = load_vgg_classifier(vgg16_state_path)
+classify = load_mobileNet_classifier(mobileNet_path)
 transform = ClassUtils.vgg_transform
+
+
 
 # Expects a numpy array image
 def infer(image, infer_model=classify, infer_transform=transform):
@@ -113,11 +140,13 @@ def example_init(examples=20, display=True):
             incorrect += 1
         
         if display:
-            print(f"Prediction of {infer_and_display(image, 0.25, label)}% of a crosswalk (Crosswalk: {label[0]==1})")
+            print(f"Prediction of {infer_and_display(image, 0.4, label)}% of a crosswalk (Crosswalk: {label[0]==1})")
     print(f"correct: {correct}, incorrect: {incorrect}, of which false positives were {falsepos} and false negatives were {falseneg}")
 
 
-example_init(examples=10,display=False)
-print(ClassUtils.CrosswalkDataset(data_path)[0][0])
-print(tandanu_infer(torchvision.transforms.functional.to_pil_image(
-    ClassUtils.CrosswalkDataset(data_path)[0][0])))
+example_init(examples=20,display=True)
+# print(ClassUtils.CrosswalkDataset(data_path)[0][0])
+# print(tandanu_infer(torchvision.transforms.functional.to_pil_image(
+#     ClassUtils.CrosswalkDataset(data_path)[0][0])))
+    
+# infer_and_display(torchvision.transforms.functional.to_pil_image())
